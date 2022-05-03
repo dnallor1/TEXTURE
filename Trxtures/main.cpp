@@ -26,6 +26,33 @@ public:
         u_bound_  = u_bound  ;
         d_bound_  = d_bound  ;
     }
+    void moveInDirection(float dt, const sf::Keyboard::Key &key) {
+
+        sf::FloatRect bounds = getGlobalBounds();
+        if (key == sf::Keyboard::Up and bounds.top > 0) {
+            bouncce();
+            move(0, -y_speed_ * dt);
+        } else if (key == sf::Keyboard::Down and
+                   bounds.top + bounds.height > window_size.y) {
+            bouncce();
+            move(0, y_speed_ * dt);
+        } else if (key == sf::Keyboard::Left and bounds.left > 0) {
+            bouncce();
+            move(-x_speed_ * dt, 0);
+        } else if (key == sf::Keyboard::Right and
+                   bounds.left + bounds.width > window_size.x) {
+            bouncce();
+            move(x_speed_ * dt, 0);
+        }
+    }
+    bool isClicked(const sf::Vector2i &mouse_position) {
+        sf::FloatRect bounds = getGlobalBounds();
+        if(mouse_position.x >= bounds.left && mouse_position.x <= bounds.left + bounds.width
+                && mouse_position.y >= bounds.top && mouse_position.y <= bounds.top + bounds.height) {
+            return true;
+        }
+        return false;
+    }
 private:
     int x_speed_ = 0 ;
     int y_speed_ = 0 ;
@@ -34,6 +61,8 @@ private:
     float r_bound_ = 0;
     float u_bound_ = 0;
     float d_bound_ = 0;
+    sf::Vector2u window_size;
+
     void bouncce(){
         sf::FloatRect rectangle_bounds = getGlobalBounds();
 
@@ -58,52 +87,39 @@ private:
     }
 };
 
-void create_shapes(std::vector<std::unique_ptr<sf::Drawable>> &shape_vec) {
-    sf::Vector2f size(120.0, 60.0);
-    auto rec =  std::make_unique<sf::RectangleShape>(size);
-    rec->setPosition(500.0, 400.0);
-
-    auto cir = std::make_unique<sf::CircleShape>(60.0);
-
-    shape_vec.emplace_back(std::move(rec));
-    shape_vec.emplace_back(std::move(cir));
-}
 int main() {
     // create the window
     sf::RenderWindow window(sf::VideoMode(800, 600), "My window");
     std::vector<std::unique_ptr<sf::Drawable>> shapes;
-    create_shapes(shapes);
     sf::Vector2f size(120.0, 60.0);
     sf::Vector2f position(120.0, 60.0);
-
-    CustomRectangleShape rectangle_inh(size, position);
-    rectangle_inh.setFillColor(sf::Color(150, 100, 50));
-    rectangle_inh.setSpeed(100, 150);
-//    rectangle_inh.setTexture(&image1);
-
     // create some shapes
-    sf::RectangleShape rectangle(sf::Vector2f(120.0, 60.0));
+    CustomRectangleShape rectangle(size, position);
     rectangle.setPosition(500.0, 400.0);
     rectangle.setFillColor(sf::Color(100, 50, 250));
+    rectangle.setSpeed(100, 150);
+
+    sf::Texture texture_guy;
+    if(!texture_guy.loadFromFile("guy.png")) { return 1; }
+    sf::Sprite guy;
+    guy.setTexture(texture_guy);
+    guy.setTextureRect(sf::IntRect(10, 20, 20, 15)); //left, top, width, height
+//    guy.setSpeed(100, 150);
+
     sf::Clock clock;
     int rectangle_velocity_x = 5;
     int rectangle_velocity_y = 15;
-    int rectangle_angular_velocity = 10;
     bool flag_y = false;
     bool flag_x = false;
     // run the program as long as the window is open
     while (window.isOpen()) {
         sf::Time elapsed = clock.restart();
         float dt = elapsed.asSeconds();
-        rectangle.move(rectangle_velocity_x*dt,rectangle_velocity_y*dt);
-        rectangle.rotate(rectangle_angular_velocity*dt);
-//        rectangle_inh.animate(elapsed);
-        rectangle_inh.setBounds(0, window.getSize().x, 0, window.getSize().y);
-
+//        move(x_speed_*dt,y_speed_*dt);
+//        guy.move(velocity_x * dt, velocity_y * dt);
+//        guy.animate(elapsed);
+        rectangle.setBounds(0, window.getSize().x, 0, window.getSize().y);
         sf::FloatRect rectangle_bounds = rectangle.getGlobalBounds();
-//        std::cout << rectangle_bounds.top << " " << rectangle_bounds.left << " " ;
-//        std::cout << rectangle_bounds.width << " " << rectangle_bounds.height << std::endl;
-
         if(rectangle_bounds.top<=0 || rectangle_bounds.top+rectangle_bounds.height>=window.getSize().y)
             {
                 if(flag_y != true)
@@ -130,25 +146,19 @@ int main() {
             }
             else
                 flag_x = false;
-        // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event)) {
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        if(event.type == sf::Event::KeyReleased)
-            {
-                if(event.key.code == sf::Keyboard::Space)
-                {
-                    rectangle_inh.animate(elapsed);
 
-                    std::cout << "Space released" << std::endl;
-                }
-            }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        {
-            rectangle_inh.animate(elapsed);
+        if(event.type == sf::Event::KeyPressed) {
+//            sf::Sprite move = moveInDirection(dt);
+                rectangle.moveInDirection(dt, event.key.code);
+//                guy.moveInDirection(dt, event.key.code);
+//            guy.move(velocity_x * dt, velocity_y * dt);
+                guy.move(dt, event.key.code);
         }
         // clear the window with black color
         window.clear(sf::Color::Black);
@@ -193,13 +203,6 @@ int main() {
         wall5.setPosition(550.0, 350.0);
         wall5.setTextureRect(sf::IntRect(0, 0, 200, 50));
 
-        sf::Texture texture_guy;
-        if(!texture_guy.loadFromFile("guy.png")) { return 1; }
-        sf::Sprite guy;
-        guy.setTexture(texture_guy);
-        guy.setTextureRect(sf::IntRect(10, 20, 20, 15)); //left, top, width, height
-//        guy.setSpeed(100, 150, 10);
-
         // draw everything here...
         window.draw(grass);
         window.draw(wall);
@@ -208,12 +211,7 @@ int main() {
         window.draw(wall4);
         window.draw(wall5);
         window.draw(guy);
-        window.draw(rectangle_inh);
         window.draw(rectangle);
-        window.draw(rectangle_inh);
-        for (auto &s : shapes) {
-            window.draw(*s);
-        }
         // end the current frame
         window.display();
     }
