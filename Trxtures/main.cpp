@@ -27,7 +27,6 @@ public:
         d_bound_  = d_bound  ;
     }
     void moveInDirection(float dt, const sf::Keyboard::Key &key) {
-
         sf::FloatRect bounds = getGlobalBounds();
         if (key == sf::Keyboard::Up and bounds.top > 0) {
             bouncce();
@@ -62,24 +61,19 @@ private:
     float u_bound_ = 0;
     float d_bound_ = 0;
     sf::Vector2u window_size;
-
     void bouncce(){
         sf::FloatRect rectangle_bounds = getGlobalBounds();
-
         if(rectangle_bounds.top <= u_bound_){
             y_speed_ = abs(y_speed_);
         }
-
         if(rectangle_bounds.top + rectangle_bounds.height >= d_bound_){
             y_speed_ = abs(y_speed_) * -1;
             setFillColor(sf::Color(rand() % 256, rand() % 256, rand() % 256));
         }
-
         if(rectangle_bounds.left <= l_bound_ ){
-           x_speed_ = abs(x_speed_);
-           setFillColor(sf::Color(rand() % 256, rand() % 256, rand() % 256));
+            x_speed_ = abs(x_speed_);
+            setFillColor(sf::Color(rand() % 256, rand() % 256, rand() % 256));
         }
-
         if(rectangle_bounds.left + rectangle_bounds.width >= r_bound_){
             x_speed_ = abs(x_speed_) * -1;
             setFillColor(sf::Color(rand() % 256, rand() % 256, rand() % 256));
@@ -91,7 +85,7 @@ int main() {
     // create the window
     sf::RenderWindow window(sf::VideoMode(800, 600), "My window");
     std::vector<std::unique_ptr<sf::Drawable>> shapes;
-    sf::Vector2f size(120.0, 60.0);
+    sf::Vector2f size(60.0, 75.0);
     sf::Vector2f position(120.0, 60.0);
     // create some shapes
     CustomRectangleShape rectangle(size, position);
@@ -104,105 +98,97 @@ int main() {
     sf::Sprite guy;
     guy.setTexture(texture_guy);
     guy.setTextureRect(sf::IntRect(10, 20, 20, 15)); //left, top, width, height
-//    guy.setSpeed(100, 150);
+
+    sf::Texture texture_grass;
+    if (!texture_grass.loadFromFile("grass.png")) { return 1; }
+    texture_grass.setRepeated(true);
+    sf::Sprite grass;
+    grass.setTexture(texture_grass);
+    grass.setTextureRect(sf::IntRect(0, 0, 800, 600));
+
+    sf::Texture texture_wall;
+    if(!texture_wall.loadFromFile("wall.png")) { return 1; }
+    texture_wall.setRepeated(true);
+    sf::Sprite wall;
+    wall.setTexture(texture_wall);
+    wall.setScale(0.9, 0.9);
+    wall.setPosition(50.0, 100.0);
+    wall.setTextureRect(sf::IntRect(0, 0, 50, 300));
+
+    sf::Sprite wall2;
+    wall2.setTexture(texture_wall);
+    wall2.setScale(0.9, 0.9);
+    wall2.setPosition(175.0, 150.0);
+    wall2.setTextureRect(sf::IntRect(0, 0, 50, 400));
+
+    sf::Sprite wall3;
+    wall3.setTexture(texture_wall);
+    wall3.setScale(0.9, 0.9);
+    wall3.setPosition(550.0, 100.0);
+    wall3.setTextureRect(sf::IntRect(0, 0, 50, 400));
+
+    sf::Sprite wall4;
+    wall4.setTexture(texture_wall);
+    wall4.setScale(0.9, 0.9);
+    wall4.setPosition(275.0, 75.0);
+    wall4.setTextureRect(sf::IntRect(0, 0, 200, 50));
+
+    sf::Sprite wall5;
+    wall5.setTexture(texture_wall);
+    wall5.setScale(0.9, 0.9);
+    wall5.setPosition(550.0, 350.0);
+    wall5.setTextureRect(sf::IntRect(0, 0, 200, 50));
 
     sf::Clock clock;
-    int rectangle_velocity_x = 5;
-    int rectangle_velocity_y = 15;
-    bool flag_y = false;
-    bool flag_x = false;
+//    int rectangle_velocity_x = 5;
+//    int rectangle_velocity_y = 15;
+//    bool flag_y = false;
+//    bool flag_x = false;
+    rectangle.setTexture(&texture_guy);
     // run the program as long as the window is open
     while (window.isOpen()) {
         sf::Time elapsed = clock.restart();
         float dt = elapsed.asSeconds();
-//        move(x_speed_*dt,y_speed_*dt);
-//        guy.move(velocity_x * dt, velocity_y * dt);
-//        guy.animate(elapsed);
         rectangle.setBounds(0, window.getSize().x, 0, window.getSize().y);
-        sf::FloatRect rectangle_bounds = rectangle.getGlobalBounds();
-        if(rectangle_bounds.top<=0 || rectangle_bounds.top+rectangle_bounds.height>=window.getSize().y)
-            {
-                if(flag_y != true)
-                {
-                    rectangle_velocity_y *= -1;
-                    rectangle.setFillColor(sf::Color(rand() % 256,
-                                                     rand() % 256,
-                                                     rand() % 256));
-                }
-                flag_y = true;
-            }
-            else
-                flag_y = false;
-            if(rectangle_bounds.left<=0 || rectangle_bounds.left+rectangle_bounds.width>=window.getSize().x)
-            {
-                if(flag_x!=true)
-                {
-                    rectangle_velocity_x *= -1;
-                    rectangle.setFillColor(sf::Color(rand() % 256,
-                                                     rand() % 256,
-                                                     rand() % 256));
-                }
-                flag_x = true;
-            }
-            else
-                flag_x = false;
+//        sf::FloatRect rectangle_bounds = rectangle.getGlobalBounds();
+//        if(rectangle_bounds.top<=0 || rectangle_bounds.top+rectangle_bounds.height>=window.getSize().y)
+//        {
+//            if(flag_y != true)
+//            {
+//                rectangle_velocity_y *= -1;
+//                rectangle.setFillColor(sf::Color(rand() % 256,
+//                                                 rand() % 256,
+//                                                 rand() % 256));
+//            }
+//            flag_y = true;
+//        }
+//        else
+//            flag_y = false;
+//        if(rectangle_bounds.left<=0 || rectangle_bounds.left+rectangle_bounds.width>=window.getSize().x)
+//        {
+//            if(flag_x!=true)
+//            {
+//                rectangle_velocity_x *= -1;
+//                rectangle.setFillColor(sf::Color(rand() % 256,
+//                                                 rand() % 256,
+//                                                 rand() % 256));
+//            }
+//            flag_x = true;
+//        }
+//        else
+//            flag_x = false;
         sf::Event event;
         while (window.pollEvent(event)) {
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
         if(event.type == sf::Event::KeyPressed) {
-//            sf::Sprite move = moveInDirection(dt);
-                rectangle.moveInDirection(dt, event.key.code);
-//                guy.moveInDirection(dt, event.key.code);
-//            guy.move(velocity_x * dt, velocity_y * dt);
-                guy.move(dt, event.key.code);
+            rectangle.moveInDirection(dt, event.key.code);
+            guy.move(dt, event.key.code);
         }
         // clear the window with black color
         window.clear(sf::Color::Black);
-
-        sf::Texture texture_grass;
-        if (!texture_grass.loadFromFile("grass.png")) { return 1; }
-        texture_grass.setRepeated(true);
-        sf::Sprite grass;
-        grass.setTexture(texture_grass);
-        grass.setTextureRect(sf::IntRect(0, 0, 800, 600));
-
-        sf::Texture texture_wall;
-        if(!texture_wall.loadFromFile("wall.png")) { return 1; }
-        texture_wall.setRepeated(true);
-        sf::Sprite wall;
-        wall.setTexture(texture_wall);
-        wall.setScale(0.9, 0.9);
-        wall.setPosition(50.0, 100.0);
-        wall.setTextureRect(sf::IntRect(0, 0, 50, 300));
-
-        sf::Sprite wall2;
-        wall2.setTexture(texture_wall);
-        wall2.setScale(0.9, 0.9);
-        wall2.setPosition(175.0, 150.0);
-        wall2.setTextureRect(sf::IntRect(0, 0, 50, 400));
-
-        sf::Sprite wall3;
-        wall3.setTexture(texture_wall);
-        wall3.setScale(0.9, 0.9);
-        wall3.setPosition(550.0, 100.0);
-        wall3.setTextureRect(sf::IntRect(0, 0, 50, 400));
-
-        sf::Sprite wall4;
-        wall4.setTexture(texture_wall);
-        wall4.setScale(0.9, 0.9);
-        wall4.setPosition(275.0, 75.0);
-        wall4.setTextureRect(sf::IntRect(0, 0, 200, 50));
-
-        sf::Sprite wall5;
-        wall5.setTexture(texture_wall);
-        wall5.setScale(0.9, 0.9);
-        wall5.setPosition(550.0, 350.0);
-        wall5.setTextureRect(sf::IntRect(0, 0, 200, 50));
-
         // draw everything here...
         window.draw(grass);
         window.draw(wall);
@@ -210,9 +196,8 @@ int main() {
         window.draw(wall3);
         window.draw(wall4);
         window.draw(wall5);
-        window.draw(guy);
         window.draw(rectangle);
-        // end the current frame
+        //        window.draw(guy);
         window.display();
     }
     return 0;
