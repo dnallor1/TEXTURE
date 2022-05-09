@@ -111,7 +111,6 @@ int main() {
     wall.setTexture(texture_wall);
     wall.setTextureRect(sf::IntRect(0, 0, 40, 300));
     texture_wall.setRepeated(true);
-
     //wall_1
     wall.setPosition(sf::Vector2f(50, 80));
     walls.push_back(wall);
