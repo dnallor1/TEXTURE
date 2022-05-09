@@ -155,9 +155,9 @@ int main() {
                 window.close();
         }
         //guy Movement
-        sf::Keyboard::Key pressed;
+        sf::Keyboard::Key clicked;
         if(event.type == sf::Event::KeyPressed){
-            pressed = event.key.code;
+            clicked = event.key.code;
             //collision
             for(auto &wall : walls) {
                 sf::FloatRect guyBounds = rectangle.getGlobalBounds();
@@ -199,7 +199,7 @@ int main() {
                     }
                 }
                 rectangle.animate(elapsed);
-                rectangle.moveInDirection(elapsed,pressed);
+                rectangle.moveInDirection(elapsed,clicked);
             }
         }
         window.clear(sf::Color::Black);
