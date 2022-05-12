@@ -25,7 +25,7 @@ public:
         u_bound_  = u_bound  ;
         d_bound_  = d_bound  ;
     }
-    void moveInDirection(const sf::Time &elapsed, const sf::Keyboard::Key &key)      {
+    void moveInDirection(const sf::Time &elapsed, const sf::Keyboard::Key &key, std::vector<sf::Sprite> &hearts)      {
         float dt = elapsed.asSeconds();
         if(key == sf::Keyboard::Up) {
             y_speed_ = -1*abs(y_speed_);
@@ -81,8 +81,9 @@ int main() {
     sf::Vector2f size(40.0, 60.0);
     sf::Vector2f position(520.0, 360.0);
     CustomRectangleShape rectangle(size, position);
-    rectangle.setSpeed(10, 10, 5);
+    rectangle.setSpeed(20, 20, 5);
     std::srand(std::time(nullptr));
+    //grass
     sf::Texture texture_grass;
     if (!texture_grass.loadFromFile("grass.png")) {
         std::cerr << "Could not load texture" << std::endl;
@@ -93,6 +94,25 @@ int main() {
     grass.setTextureRect(sf::IntRect(0, 0, 800, 600));
     texture_grass.setRepeated(true);
 
+    //won
+    sf::Texture texture_won;
+    if (!texture_won.loadFromFile("won.png")) {
+        return 1;
+    }
+    sf::Sprite won;
+    won.setTexture(texture_won);
+
+
+    //gameover
+    sf::Texture texture_gameover;
+    if (!texture_gameover.loadFromFile("gameover.png")) {
+        return 1;
+    }
+    sf::Sprite gameover;
+    gameover.setTexture(texture_gameover);
+    gameover.scale(0.14, 0.14);
+
+    //guy
     sf::Texture texture_guy;
     if(!texture_guy.loadFromFile("guy.png")) {
         return 1; }
@@ -101,6 +121,35 @@ int main() {
     guy.setTextureRect(sf::IntRect(20, 20, 20, 20)); //left, top, width, height
     texture_guy.setRepeated(true);
 
+    //house
+    sf::Texture texture_house;
+    if (!texture_house.loadFromFile("house.png")) {
+        return 1;
+    }
+    sf::Sprite house;
+    house.setTexture(texture_house);
+    house.scale(0.6, 0.6);
+    house.setPosition(sf::Vector2f(325, 455));
+
+    //heart
+    sf::Texture texture_heart;
+    if(!texture_heart.loadFromFile("heart.png")) {
+        return 1; }
+    std::vector<sf::Sprite> hearts;
+    sf::Sprite heart;
+    heart.scale(0.06, 0.06);
+    heart.setTexture(texture_heart);
+    //heart_1
+    heart.setPosition(sf::Vector2f(700, 30));
+    hearts.push_back(heart);
+    //heart_2;
+    heart.setPosition(sf::Vector2f(730, 30));
+    hearts.push_back(heart);
+    //heart_3;
+    heart.setPosition(sf::Vector2f(760, 30));
+    hearts.push_back(heart);
+
+    //wall
     sf::Texture texture_wall;
     if(!texture_wall.loadFromFile("wall.png")) {
         return 1; }
@@ -131,7 +180,7 @@ int main() {
     wall.setRotation(-90);
     walls.push_back(wall);
     //wall_7;
-    wall.setPosition(sf::Vector2f(70, 520));
+    wall.setPosition(sf::Vector2f(50, 520));
     wall.setRotation(-90);
     walls.push_back(wall);
     //wall_8;
@@ -161,9 +210,38 @@ int main() {
             for(auto &wall : walls) {
                 sf::FloatRect guyBounds = rectangle.getGlobalBounds();
                 sf::FloatRect wallBounds = wall.getGlobalBounds();
+//                sf::FloatRect houseBounds = house.getGlobalBounds();
+
                 new_Pos_ = guyBounds;
                 new_Pos_.left += vel_.x;
                 new_Pos_.top += vel_.y;
+
+                if (guyBounds == house.getGlobalBounds()){
+
+
+
+                    while (true) {
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                            window.close();
+                        }
+                        window.clear(sf::Color::White);
+                        window.draw(won);
+
+                        window.display();
+                    }
+                }
+
+                if (hearts.size() == 0) {
+
+                    while (true) {
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                            window.close();
+                        }
+                        window.clear(sf::Color::White);
+                        window.draw(gameover);
+                        window.display();
+                    }
+                }
 
                 if(wallBounds.intersects(new_Pos_)){
                     vel_.y = 0.f;
@@ -173,39 +251,49 @@ int main() {
                             && guyBounds.top  + guyBounds.height < wallBounds.top  + wallBounds.height
                             && guyBounds.left < wallBounds.left + wallBounds.width
                             && guyBounds.left + guyBounds.width > wallBounds.left){
-                        rectangle.setPosition(guyBounds.left, wallBounds.top - guyBounds.height);
+                        hearts.pop_back();
+                        rectangle.setPosition(10,10);
                     }
                     //Top Collision
                     else if(guyBounds.top > wallBounds.top
                             && guyBounds.top  + guyBounds.height > wallBounds.top  + wallBounds.height
                             && guyBounds.left < wallBounds.left + wallBounds.width
                             && guyBounds.left + guyBounds.width > wallBounds.left){
-                        rectangle.setPosition(guyBounds.left, wallBounds.top + wallBounds.height);
+                        hearts.pop_back();
+                        rectangle.setPosition(10,10);
                     }
                     //Right Collision
                     if(guyBounds.left < wallBounds.left
                             && guyBounds.left + guyBounds.width < wallBounds.left + wallBounds.width
                             && guyBounds.top < wallBounds.top + wallBounds.height
                             && guyBounds.top + guyBounds.height > wallBounds.top){
-                        rectangle.setPosition(wallBounds.left - guyBounds.width, guyBounds.top);
+                        hearts.pop_back();
+                        rectangle.setPosition(10,10);
                     }
                     //Left Collision
                     else if(guyBounds.left > wallBounds.left
                             && guyBounds.left + guyBounds.width > wallBounds.left + wallBounds.width
                             && guyBounds.top < wallBounds.top + wallBounds.height
                             && guyBounds.top + guyBounds.height > wallBounds.top){
-                        rectangle.setPosition(wallBounds.left + wallBounds.width, guyBounds.top);
+                        hearts.pop_back();
+                        rectangle.setPosition(10,10);
                     }
                 }
-                rectangle.moveInDirection(elapsed,clicked);
+                rectangle.moveInDirection(elapsed,clicked,hearts);
             }
         }
         window.clear(sf::Color::Black);
         window.draw(grass);
+        window.draw(house);
+
         for(auto &wall_ : walls) {
             window.draw(wall_);
         }
+        for(auto &heart_ : hearts) {
+            window.draw(heart_);
+        }
         window.draw(rectangle);
+        //        window.draw(gameover);
         window.display();
     }
     return 0;
