@@ -197,7 +197,6 @@ int main() {
                         rectangle.setPosition(wallBounds.left + wallBounds.width, guyBounds.top);
                     }
                 }
-                rectangle.animate(elapsed);
                 rectangle.moveInDirection(elapsed,clicked);
             }
         }
