@@ -101,6 +101,7 @@ int main() {
     }
     sf::Sprite won;
     won.setTexture(texture_won);
+    won.scale(0.14, 0.14);
 
 
     //gameover
@@ -110,7 +111,7 @@ int main() {
     }
     sf::Sprite gameover;
     gameover.setTexture(texture_gameover);
-    gameover.scale(0.14, 0.14);
+    gameover.scale(2.2, 2.2);
 
     //guy
     sf::Texture texture_guy;
@@ -140,13 +141,16 @@ int main() {
     heart.scale(0.06, 0.06);
     heart.setTexture(texture_heart);
     //heart_1
-    heart.setPosition(sf::Vector2f(700, 30));
+    heart.setPosition(sf::Vector2f(680, 30));
     hearts.push_back(heart);
     //heart_2;
-    heart.setPosition(sf::Vector2f(730, 30));
+    heart.setPosition(sf::Vector2f(710, 30));
     hearts.push_back(heart);
     //heart_3;
-    heart.setPosition(sf::Vector2f(760, 30));
+    heart.setPosition(sf::Vector2f(740, 30));
+    hearts.push_back(heart);
+    //heart_4;
+    heart.setPosition(sf::Vector2f(770, 30));
     hearts.push_back(heart);
 
     //wall
@@ -216,7 +220,7 @@ int main() {
                 new_Pos_.left += vel_.x;
                 new_Pos_.top += vel_.y;
 
-                if (guyBounds == house.getGlobalBounds()){
+                if (rectangle.getGlobalBounds() == house.getGlobalBounds()){
 
 
 
