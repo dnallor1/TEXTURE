@@ -30,6 +30,7 @@ public:
         if(key == sf::Keyboard::Up) {
             y_speed_ = -1*abs(y_speed_);
             bounce();
+            hearts.size();
             move(0, y_speed_ * dt);
         }
         else if(key == sf::Keyboard::Down) {
@@ -101,8 +102,7 @@ int main() {
     }
     sf::Sprite won;
     won.setTexture(texture_won);
-    won.scale(0.14, 0.14);
-
+    won.scale(1.3, 1.3);
 
     //gameover
     sf::Texture texture_gameover;
@@ -130,7 +130,7 @@ int main() {
     sf::Sprite house;
     house.setTexture(texture_house);
     house.scale(0.6, 0.6);
-    house.setPosition(sf::Vector2f(325, 455));
+    house.setPosition(sf::Vector2f(675, 455));
 
     //heart
     sf::Texture texture_heart;
@@ -174,21 +174,21 @@ int main() {
     wall.setPosition(sf::Vector2f(250, 80));
     walls.push_back(wall);
     //wall_4;
-    wall.setPosition(sf::Vector2f(450, 300));
+    wall.setPosition(sf::Vector2f(450, 200));
     walls.push_back(wall);
     //wall_5;
-    wall.setPosition(sf::Vector2f(700, 100));
+    wall.setPosition(sf::Vector2f(650, 150));
     walls.push_back(wall);
     //wall_6;
     wall.setPosition(sf::Vector2f(250, 235));
     wall.setRotation(-90);
     walls.push_back(wall);
     //wall_7;
-    wall.setPosition(sf::Vector2f(50, 520));
+    wall.setPosition(sf::Vector2f(5, 520));
     wall.setRotation(-90);
     walls.push_back(wall);
     //wall_8;
-    wall.setPosition(sf::Vector2f(450, 520));
+    wall.setPosition(sf::Vector2f(395, 520));
     wall.setRotation(-90);
     walls.push_back(wall);
     //wall_9;
@@ -214,16 +214,14 @@ int main() {
             for(auto &wall : walls) {
                 sf::FloatRect guyBounds = rectangle.getGlobalBounds();
                 sf::FloatRect wallBounds = wall.getGlobalBounds();
-//                sf::FloatRect houseBounds = house.getGlobalBounds();
+                sf::FloatRect houseBounds = house.getGlobalBounds();
 
                 new_Pos_ = guyBounds;
                 new_Pos_.left += vel_.x;
                 new_Pos_.top += vel_.y;
 
-                if (rectangle.getGlobalBounds() == house.getGlobalBounds()){
-
-
-
+                if(guyBounds.left > houseBounds.left
+                        && guyBounds.left + guyBounds.width > houseBounds.left + wallBounds.width){
                     while (true) {
                         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
                             window.close();
@@ -234,62 +232,61 @@ int main() {
                         window.display();
                     }
                 }
+                    if (hearts.size() == 0) {
 
-                if (hearts.size() == 0) {
-
-                    while (true) {
-                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
-                            window.close();
+                        while (true) {
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                                window.close();
+                            }
+                            window.clear(sf::Color::White);
+                            window.draw(gameover);
+                            window.display();
                         }
-                        window.clear(sf::Color::White);
-                        window.draw(gameover);
-                        window.display();
                     }
+                for (size_t i = 0; i < hearts.size(); i--){
+                    if(wallBounds.intersects(new_Pos_)){
+                        vel_.y = 0.f;
+                        vel_.x = 0.f;
+                        //Bottom Collision
+                        if(guyBounds.top < wallBounds.top
+                                && guyBounds.top  + guyBounds.height < wallBounds.top  + wallBounds.height
+                                && guyBounds.left < wallBounds.left + wallBounds.width
+                                && guyBounds.left + guyBounds.width > wallBounds.left){
+                            hearts.pop_back();
+                            rectangle.setPosition(10,10);
+                        }
+                        //Top Collision
+                        else if(guyBounds.top > wallBounds.top
+                                && guyBounds.top  + guyBounds.height > wallBounds.top  + wallBounds.height
+                                && guyBounds.left < wallBounds.left + wallBounds.width
+                                && guyBounds.left + guyBounds.width > wallBounds.left){
+                            hearts.pop_back();
+                            rectangle.setPosition(10,10);
+                        }
+                        //Right Collision
+                        if(guyBounds.left < wallBounds.left
+                                && guyBounds.left + guyBounds.width < wallBounds.left + wallBounds.width
+                                && guyBounds.top < wallBounds.top + wallBounds.height
+                                && guyBounds.top + guyBounds.height > wallBounds.top){
+                            hearts.pop_back();
+                            rectangle.setPosition(10,10);
+                        }
+                        //Left Collision
+                        else if(guyBounds.left > wallBounds.left
+                                && guyBounds.left + guyBounds.width > wallBounds.left + wallBounds.width
+                                && guyBounds.top < wallBounds.top + wallBounds.height
+                                && guyBounds.top + guyBounds.height > wallBounds.top){
+                            hearts.pop_back();
+                            rectangle.setPosition(10,10);
+                        }
+                    }
+                    rectangle.moveInDirection(elapsed,clicked,hearts);
                 }
-
-                if(wallBounds.intersects(new_Pos_)){
-                    vel_.y = 0.f;
-                    vel_.x = 0.f;
-                    //Bottom Collision
-                    if(guyBounds.top < wallBounds.top
-                            && guyBounds.top  + guyBounds.height < wallBounds.top  + wallBounds.height
-                            && guyBounds.left < wallBounds.left + wallBounds.width
-                            && guyBounds.left + guyBounds.width > wallBounds.left){
-                        hearts.pop_back();
-                        rectangle.setPosition(10,10);
-                    }
-                    //Top Collision
-                    else if(guyBounds.top > wallBounds.top
-                            && guyBounds.top  + guyBounds.height > wallBounds.top  + wallBounds.height
-                            && guyBounds.left < wallBounds.left + wallBounds.width
-                            && guyBounds.left + guyBounds.width > wallBounds.left){
-                        hearts.pop_back();
-                        rectangle.setPosition(10,10);
-                    }
-                    //Right Collision
-                    if(guyBounds.left < wallBounds.left
-                            && guyBounds.left + guyBounds.width < wallBounds.left + wallBounds.width
-                            && guyBounds.top < wallBounds.top + wallBounds.height
-                            && guyBounds.top + guyBounds.height > wallBounds.top){
-                        hearts.pop_back();
-                        rectangle.setPosition(10,10);
-                    }
-                    //Left Collision
-                    else if(guyBounds.left > wallBounds.left
-                            && guyBounds.left + guyBounds.width > wallBounds.left + wallBounds.width
-                            && guyBounds.top < wallBounds.top + wallBounds.height
-                            && guyBounds.top + guyBounds.height > wallBounds.top){
-                        hearts.pop_back();
-                        rectangle.setPosition(10,10);
-                    }
-                }
-                rectangle.moveInDirection(elapsed,clicked,hearts);
             }
         }
         window.clear(sf::Color::Black);
         window.draw(grass);
         window.draw(house);
-
         for(auto &wall_ : walls) {
             window.draw(wall_);
         }
@@ -297,7 +294,6 @@ int main() {
             window.draw(heart_);
         }
         window.draw(rectangle);
-        //        window.draw(gameover);
         window.display();
     }
     return 0;
