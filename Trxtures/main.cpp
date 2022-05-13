@@ -232,17 +232,17 @@ int main() {
                         window.display();
                     }
                 }
-                    if (hearts.size() == 0) {
+                if (hearts.size() == 0) {
 
-                        while (true) {
-                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
-                                window.close();
-                            }
-                            window.clear(sf::Color::White);
-                            window.draw(gameover);
-                            window.display();
+                    while (true) {
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                            window.close();
                         }
+                        window.clear(sf::Color::White);
+                        window.draw(gameover);
+                        window.display();
                     }
+                }
                 for (size_t i = 0; i < hearts.size(); i--){
                     if(wallBounds.intersects(new_Pos_)){
                         vel_.y = 0.f;
